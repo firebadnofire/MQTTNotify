@@ -47,6 +47,7 @@ If you can `mosquitto_pub`, you can notify your phone.
 ## Requirements
 
 * Android 8.0+
+* Notifications permission enabled (Android 13+)
 * Battery optimization **disabled** for this app
 * A reachable MQTT broker with TLS enabled
 
@@ -72,7 +73,7 @@ Anything compliant with MQTT 3.1.1 or 5.0 over TLS should work.
 Supported methods:
 
 * Username + password
-* Client TLS certificates (recommended)
+* Client TLS certificates (recommended, selected from the system KeyChain)
 
 Anonymous or plaintext connections are intentionally unsupported.
 
@@ -138,7 +139,10 @@ Examples:
 alerts/backup
 alerts/ci/failed
 home/doorbell
+alerts/backup:2
 ```
+
+Optional `:qos` suffixes apply to a single subscription (0, 1, or 2). If omitted, the app uses QoS 1.
 
 ---
 
@@ -157,7 +161,7 @@ If the app is killed, messages published during that time are **not** replayed.
 
 * The MQTT broker is the trust root
 * TLS is mandatory
-* Credentials are stored using Android Keystore
+* Credentials are stored using Android Keystore-backed encryption
 * No analytics, no external connections
 
 If you do not trust your broker, do not use this app.
