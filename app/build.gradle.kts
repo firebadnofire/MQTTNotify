@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.material)
+    implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.security.crypto)
     implementation(libs.paho.mqtt)
 

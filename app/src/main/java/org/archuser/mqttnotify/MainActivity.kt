@@ -5,16 +5,21 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.archuser.mqttnotify.databinding.ActivityMainBinding
+import org.archuser.mqttnotify.databinding.DialogAddTopicBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefs: PreferencesStore
+    private val topics = mutableListOf<String>()
 
     private val notificationPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -45,11 +50,17 @@ class MainActivity : AppCompatActivity() {
         binding.clientIdInput.setText(config.clientId)
         binding.usernameInput.setText(config.username)
         binding.passwordInput.setText(config.password)
-        binding.topicsInput.setText(config.topics.joinToString("\n"))
         binding.clientCertAliasValue.text = config.clientCertAlias ?: getString(R.string.no_cert_selected)
+        topics.clear()
+        topics.addAll(config.topics)
+        renderTopics()
     }
 
     private fun setupActions() {
+        binding.toolbar.setNavigationOnClickListener {
+            binding.drawerLayout.openDrawer(Gravity.START)
+        }
+
         binding.selectCertButton.setOnClickListener {
             ClientCertificateHelper.chooseClientCertificate(this) { alias ->
                 if (alias != null) {
@@ -61,6 +72,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.addTopicButton.setOnClickListener {
+            showAddTopicDialog()
+        }
+
         binding.startButton.setOnClickListener {
             val updated = prefs.updateConfig { current ->
                 current.copy(
@@ -68,11 +83,7 @@ class MainActivity : AppCompatActivity() {
                     clientId = binding.clientIdInput.text?.toString()?.trim().orEmpty(),
                     username = binding.usernameInput.text?.toString()?.trim().orEmpty(),
                     password = binding.passwordInput.text?.toString()?.trim().orEmpty(),
-                    topics = binding.topicsInput.text?.toString()
-                        ?.lines()
-                        ?.map { it.trim() }
-                        ?.filter { it.isNotEmpty() }
-                        .orEmpty()
+                    topics = topics.toList()
                 )
             }
 
@@ -99,6 +110,47 @@ class MainActivity : AppCompatActivity() {
                     MqttForegroundService.ACTION_STOP
                 )
             )
+        }
+    }
+
+    private fun showAddTopicDialog() {
+        val dialogBinding = DialogAddTopicBinding.inflate(layoutInflater)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.add_topic)
+            .setView(dialogBinding.root)
+            .setPositiveButton(R.string.add) { _, _ ->
+                val topic = dialogBinding.topicInput.text?.toString()?.trim().orEmpty()
+                if (topic.isBlank()) {
+                    Toast.makeText(this, R.string.topic_empty, Toast.LENGTH_LONG).show()
+                    return@setPositiveButton
+                }
+                topics.add(topic)
+                saveTopics()
+                renderTopics()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun renderTopics() {
+        binding.topicChipGroup.removeAllViews()
+        topics.forEach { topic ->
+            val chip = Chip(this).apply {
+                text = topic
+                isCloseIconVisible = true
+                setOnCloseIconClickListener {
+                    topics.remove(topic)
+                    saveTopics()
+                    renderTopics()
+                }
+            }
+            binding.topicChipGroup.addView(chip)
+        }
+    }
+
+    private fun saveTopics() {
+        prefs.updateConfig { current ->
+            current.copy(topics = topics.toList())
         }
     }
 

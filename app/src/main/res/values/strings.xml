@@ -10,8 +10,8 @@
     <string name="client_cert_label">Client certificate (optional)</string>
     <string name="no_cert_selected">No client certificate selected</string>
     <string name="select_client_cert">Select certificate</string>
-    <string name="topics_label">Topics (one per line, optional :qos)</string>
-    <string name="topics_helper">Example: alerts/backup or alerts/backup:2</string>
+    <string name="topics_header">Topics</string>
+    <string name="topics_helper">Tap + to add a topic. Use :qos suffix for 0, 1, or 2.</string>
     <string name="battery_note">Battery optimization must be disabled for reliable delivery. Some OEMs still kill long-running services.</string>
     <string name="start_service">Start service</string>
     <string name="stop_service">Stop service</string>
@@ -27,4 +27,10 @@
     <string name="message_channel_normal">MQTT messages (normal)</string>
     <string name="message_channel_high">MQTT messages (high)</string>
     <string name="message_channel_urgent">MQTT messages (urgent)</string>
+    <string name="settings_title">Connection settings</string>
+    <string name="add_topic">Add topic</string>
+    <string name="topic_input_label">Topic (optional :qos)</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="topic_empty">Topic cannot be empty.</string>
 </resources>
