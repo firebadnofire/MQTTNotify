@@ -253,6 +253,13 @@ class MainActivity : AppCompatActivity() {
         val clipboard = getSystemService(ClipboardManager::class.java)
         clipboard.setPrimaryClip(ClipData.newPlainText("MQTTNotify config", json))
         Toast.makeText(this, R.string.export_config_copied, Toast.LENGTH_LONG).show()
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/json"
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.export_config_share_title))
+            putExtra(Intent.EXTRA_TEXT, json)
+        }
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.export_config_share_title)))
     }
 
     private fun importConfigFromJson(payload: String): Boolean {
