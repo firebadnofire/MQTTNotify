@@ -175,6 +175,7 @@ class MqttForegroundService : Service() {
 
     private fun updateStatus(status: Status) {
         currentStatus = status
+        prefs.saveServiceStatus(status.name)
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, buildServiceNotification())
     }
 

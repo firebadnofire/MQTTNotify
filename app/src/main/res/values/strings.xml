@@ -13,6 +13,11 @@
     <string name="topics_header">Topics</string>
     <string name="topics_helper">Tap + to add a topic. Use :qos suffix for 0, 1, or 2.</string>
     <string name="battery_note">Battery optimization must be disabled for reliable delivery. Some OEMs still kill long-running services.</string>
+    <string name="service_status_unknown">Service status: unknown</string>
+    <string name="service_status_running">Service status: running</string>
+    <string name="service_status_stopped">Service status: stopped</string>
+    <string name="service_status_starting">Service status: starting…</string>
+    <string name="service_status_stopping">Service status: stopping…</string>
     <string name="start_service">Start service</string>
     <string name="stop_service">Stop service</string>
     <string name="tls_required">TLS is required. Use an ssl:// broker URI.</string>

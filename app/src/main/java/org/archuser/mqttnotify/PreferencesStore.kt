@@ -34,6 +34,16 @@ class PreferencesStore(context: Context) {
         )
     }
 
+    fun loadServiceStatus(): String? {
+        return prefs.getString(KEY_SERVICE_STATUS, null)
+    }
+
+    fun saveServiceStatus(status: String) {
+        prefs.edit {
+            putString(KEY_SERVICE_STATUS, status)
+        }
+    }
+
     fun updateConfig(update: (MqttConfig) -> MqttConfig): MqttConfig {
         val updated = update(loadConfig())
         prefs.edit {
@@ -55,6 +65,6 @@ class PreferencesStore(context: Context) {
         private const val KEY_PASSWORD = "password"
         private const val KEY_TOPICS = "topics"
         private const val KEY_CLIENT_CERT_ALIAS = "client_cert_alias"
+        private const val KEY_SERVICE_STATUS = "service_status"
     }
 }
-

@@ -80,6 +80,12 @@ class MainActivity : AppCompatActivity() {
         requestNotificationPermissionIfNeeded()
         applyToolbarInsets()
         promptBatteryOptimizationsIfNeeded()
+        refreshServiceStatus()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshServiceStatus()
     }
 
     private fun bindValues() {
@@ -123,6 +129,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.startButton.setOnClickListener {
+            setServiceStatus(R.string.service_status_starting)
             val updated = prefs.updateConfig { current ->
                 current.copy(
                     brokerUri = binding.brokerUriInput.text?.toString()?.trim().orEmpty(),
@@ -151,6 +158,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.stopButton.setOnClickListener {
+            setServiceStatus(R.string.service_status_stopping)
             startService(
                 Intent(this, MqttForegroundService::class.java).setAction(
                     MqttForegroundService.ACTION_STOP
@@ -340,5 +348,19 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             notificationPermissionRequest.launch(permission)
         }
+    }
+
+    private fun refreshServiceStatus() {
+        when (prefs.loadServiceStatus()) {
+            "CONNECTING" -> setServiceStatus(R.string.service_status_starting)
+            "CONNECTED" -> setServiceStatus(R.string.service_status_running)
+            "DISCONNECTED" -> setServiceStatus(R.string.service_status_stopped)
+            "MISCONFIGURED" -> setServiceStatus(R.string.service_status_stopped)
+            else -> setServiceStatus(R.string.service_status_unknown)
+        }
+    }
+
+    private fun setServiceStatus(statusRes: Int) {
+        binding.serviceStatusValue.setText(statusRes)
     }
 }
