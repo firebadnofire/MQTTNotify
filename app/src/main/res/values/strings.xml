@@ -35,8 +35,8 @@
     <string name="topic_empty">Topic cannot be empty.</string>
     <string name="export_config">Export</string>
     <string name="import_config">Import</string>
-    <string name="export_config_copied">Config copied to clipboard.</string>
-    <string name="export_config_share_title">Share MQTTNotify config</string>
+    <string name="export_config_saved">Config saved.</string>
+    <string name="export_config_error">Failed to save config.</string>
     <string name="import_config_title">Import configuration</string>
     <string name="import_config_label">Paste config JSON</string>
     <string name="import_config_file">Import from file</string>

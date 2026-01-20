@@ -1,8 +1,6 @@
 package org.archuser.mqttnotify
 
 import android.Manifest
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -56,6 +54,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private val exportFilePicker =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+            if (uri == null) {
+                return@registerForActivityResult
+            }
+            val json = buildConfigJson()
+            if (writeTextToUri(uri, json)) {
+                Toast.makeText(this, R.string.export_config_saved, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, R.string.export_config_error, Toast.LENGTH_LONG).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -104,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.exportConfigButton.setOnClickListener {
-            exportConfigToClipboard()
+            exportConfigToFile()
         }
 
         binding.importConfigButton.setOnClickListener {
@@ -255,9 +266,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun exportConfigToClipboard() {
+    private fun exportConfigToFile() {
+        exportFilePicker.launch("mqttnotify-config.json")
+    }
+
+    private fun buildConfigJson(): String {
         val config = prefs.loadConfig()
-        val json = JSONObject().apply {
+        return JSONObject().apply {
             put("brokerUri", config.brokerUri)
             put("clientId", config.clientId)
             put("username", config.username)
@@ -265,17 +280,6 @@ class MainActivity : AppCompatActivity() {
             put("clientCertAlias", config.clientCertAlias)
             put("topics", JSONArray(config.topics))
         }.toString(2)
-
-        val clipboard = getSystemService(ClipboardManager::class.java)
-        clipboard.setPrimaryClip(ClipData.newPlainText("MQTTNotify config", json))
-        Toast.makeText(this, R.string.export_config_copied, Toast.LENGTH_LONG).show()
-
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/json"
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.export_config_share_title))
-            putExtra(Intent.EXTRA_TEXT, json)
-        }
-        startActivity(Intent.createChooser(shareIntent, getString(R.string.export_config_share_title)))
     }
 
     private fun importConfigFromJson(payload: String): Boolean {
@@ -314,6 +318,17 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (_: Exception) {
             null
+        }
+    }
+
+    private fun writeTextToUri(uri: Uri, content: String): Boolean {
+        return try {
+            contentResolver.openOutputStream(uri)?.use { output ->
+                output.bufferedWriter(Charsets.UTF_8).use { it.write(content) }
+            }
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 
