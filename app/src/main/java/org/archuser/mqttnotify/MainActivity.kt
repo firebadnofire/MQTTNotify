@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         prefs = PreferencesStore(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         bindValues()
         setupActions()
@@ -137,6 +138,7 @@ class MainActivity : AppCompatActivity() {
             )
             WindowInsetsCompat.CONSUMED
         }
+        ViewCompat.requestApplyInsets(binding.toolbar)
     }
 
     private fun promptBatteryOptimizationsIfNeeded() {
