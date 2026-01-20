@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.net.Uri
 import android.provider.Settings
 import android.view.Gravity
 import android.widget.Toast
@@ -150,8 +151,12 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.battery_optimization_title)
             .setMessage(R.string.battery_optimization_message)
-            .setPositiveButton(R.string.open_settings) { _, _ ->
-                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            .setPositiveButton(R.string.allow_background) { _, _ ->
+                startActivity(
+                    Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).setData(
+                        Uri.parse("package:$packageName")
+                    )
+                )
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
