@@ -5,11 +5,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.view.Gravity
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.archuser.mqttnotify.databinding.ActivityMainBinding
@@ -42,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         bindValues()
         setupActions()
         requestNotificationPermissionIfNeeded()
+        applyToolbarInsets()
+        promptBatteryOptimizationsIfNeeded()
     }
 
     private fun bindValues() {
@@ -111,6 +118,43 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
+    }
+
+    private fun applyToolbarInsets() {
+        val originalPaddingStart = binding.toolbar.paddingStart
+        val originalPaddingEnd = binding.toolbar.paddingEnd
+        val originalPaddingTop = binding.toolbar.paddingTop
+        val originalPaddingBottom = binding.toolbar.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(
+                left = originalPaddingStart + systemBars.left,
+                top = originalPaddingTop + systemBars.top,
+                right = originalPaddingEnd + systemBars.right,
+                bottom = originalPaddingBottom
+            )
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun promptBatteryOptimizationsIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return
+        }
+        val powerManager = getSystemService(PowerManager::class.java)
+        val packageName = packageName
+        if (powerManager.isIgnoringBatteryOptimizations(packageName)) {
+            return
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.battery_optimization_title)
+            .setMessage(R.string.battery_optimization_message)
+            .setPositiveButton(R.string.open_settings) { _, _ ->
+                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun showAddTopicDialog() {

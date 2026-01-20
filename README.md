@@ -152,6 +152,7 @@ Optional `:qos` suffixes apply to a single subscription (0, 1, or 2). If omitted
 * Reconnects automatically with exponential backoff
 * Adapts keepalive based on network type
 * No polling, no wakeups when idle
+* Prompts you to disable battery optimization if it is enabled
 
 If the app is killed, messages published during that time are **not** replayed.
 
