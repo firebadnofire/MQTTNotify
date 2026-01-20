@@ -43,6 +43,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private val importFilePicker =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri == null) {
+                return@registerForActivityResult
+            }
+            val payload = readTextFromUri(uri)
+            if (payload != null && importConfigFromJson(payload)) {
+                Toast.makeText(this, R.string.import_config_success, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, R.string.import_config_error, Toast.LENGTH_LONG).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -213,6 +226,9 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, R.string.import_config_error, Toast.LENGTH_LONG).show()
                 }
             }
+            .setNeutralButton(R.string.import_config_file) { _, _ ->
+                importFilePicker.launch(arrayOf("application/json", "text/plain"))
+            }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
@@ -288,6 +304,16 @@ class MainActivity : AppCompatActivity() {
             true
         } catch (_: Exception) {
             false
+        }
+    }
+
+    private fun readTextFromUri(uri: Uri): String? {
+        return try {
+            contentResolver.openInputStream(uri)?.use { input ->
+                input.bufferedReader(Charsets.UTF_8).use { it.readText() }
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 
