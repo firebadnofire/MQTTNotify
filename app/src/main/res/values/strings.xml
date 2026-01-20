@@ -33,6 +33,13 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="topic_empty">Topic cannot be empty.</string>
+    <string name="export_config">Export</string>
+    <string name="import_config">Import</string>
+    <string name="export_config_copied">Config copied to clipboard.</string>
+    <string name="import_config_title">Import configuration</string>
+    <string name="import_config_label">Paste config JSON</string>
+    <string name="import_config_success">Configuration imported.</string>
+    <string name="import_config_error">Invalid configuration JSON.</string>
     <string name="battery_optimization_title">Disable battery optimization</string>
     <string name="battery_optimization_message">MQTTNotify needs to run in the foreground to receive messages. Disable battery optimization for reliable delivery.</string>
     <string name="allow_background">Allow background</string>

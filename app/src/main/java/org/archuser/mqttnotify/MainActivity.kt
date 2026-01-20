@@ -1,6 +1,8 @@
 package org.archuser.mqttnotify
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -20,6 +22,9 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.archuser.mqttnotify.databinding.ActivityMainBinding
 import org.archuser.mqttnotify.databinding.DialogAddTopicBinding
+import org.archuser.mqttnotify.databinding.DialogImportConfigBinding
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -83,6 +88,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.addTopicButton.setOnClickListener {
             showAddTopicDialog()
+        }
+
+        binding.exportConfigButton.setOnClickListener {
+            exportConfigToClipboard()
+        }
+
+        binding.importConfigButton.setOnClickListener {
+            showImportConfigDialog()
         }
 
         binding.startButton.setOnClickListener {
@@ -183,6 +196,27 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun showImportConfigDialog() {
+        val dialogBinding = DialogImportConfigBinding.inflate(layoutInflater)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.import_config_title)
+            .setView(dialogBinding.root)
+            .setPositiveButton(R.string.import_config) { _, _ ->
+                val payload = dialogBinding.importConfigInput.text?.toString()?.trim().orEmpty()
+                if (payload.isBlank()) {
+                    Toast.makeText(this, R.string.import_config_error, Toast.LENGTH_LONG).show()
+                    return@setPositiveButton
+                }
+                if (importConfigFromJson(payload)) {
+                    Toast.makeText(this, R.string.import_config_success, Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, R.string.import_config_error, Toast.LENGTH_LONG).show()
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
     private fun renderTopics() {
         binding.topicChipGroup.removeAllViews()
         topics.forEach { topic ->
@@ -202,6 +236,51 @@ class MainActivity : AppCompatActivity() {
     private fun saveTopics() {
         prefs.updateConfig { current ->
             current.copy(topics = topics.toList())
+        }
+    }
+
+    private fun exportConfigToClipboard() {
+        val config = prefs.loadConfig()
+        val json = JSONObject().apply {
+            put("brokerUri", config.brokerUri)
+            put("clientId", config.clientId)
+            put("username", config.username)
+            put("password", config.password)
+            put("clientCertAlias", config.clientCertAlias)
+            put("topics", JSONArray(config.topics))
+        }.toString(2)
+
+        val clipboard = getSystemService(ClipboardManager::class.java)
+        clipboard.setPrimaryClip(ClipData.newPlainText("MQTTNotify config", json))
+        Toast.makeText(this, R.string.export_config_copied, Toast.LENGTH_LONG).show()
+    }
+
+    private fun importConfigFromJson(payload: String): Boolean {
+        return try {
+            val json = JSONObject(payload)
+            val imported = MqttConfig(
+                brokerUri = json.optString("brokerUri", ""),
+                clientId = json.optString("clientId", ""),
+                username = json.optString("username", ""),
+                password = json.optString("password", ""),
+                topics = json.optJSONArray("topics")?.let { array ->
+                    (0 until array.length())
+                        .mapNotNull { index -> array.optString(index).takeIf { it.isNotBlank() } }
+                } ?: emptyList(),
+                clientCertAlias = json.optString("clientCertAlias").takeIf { it.isNotBlank() }
+            )
+            prefs.updateConfig { imported }
+            topics.clear()
+            topics.addAll(imported.topics)
+            binding.brokerUriInput.setText(imported.brokerUri)
+            binding.clientIdInput.setText(imported.clientId)
+            binding.usernameInput.setText(imported.username)
+            binding.passwordInput.setText(imported.password)
+            binding.clientCertAliasValue.text = imported.clientCertAlias ?: getString(R.string.no_cert_selected)
+            renderTopics()
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 

@@ -132,6 +132,7 @@ This mapping is intentional and opinionated.
 * Subscriptions must be explicitly defined
 * Wildcards are supported but discouraged
 * Each topic can have independent notification rules
+* Configuration can be exported/imported as JSON via the connection drawer
 
 Examples:
 
