@@ -50,15 +50,18 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
 
     private fun startConnection() {
         startForeground(NOTIFICATION_ID, buildServiceNotification())
+        sendStatus(STATUS_CONNECTING)
         val config = storage.load()
         val host = config.server.host.trim()
         val port = config.server.port
         if (host.isBlank() || port <= 0) {
             Log.w(TAG, "Missing host or port; cannot connect")
+            sendStatus("Connection failed: missing host or port")
             stopSelf()
             return
         }
         if (client?.isConnected == true) {
+            sendStatus(STATUS_CONNECTED)
             return
         }
         val brokerUri = "ssl://$host:$port"
@@ -81,28 +84,34 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
             notificationHelper = NotificationHelper(this)
             mqttClient.connect(options, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    sendStatus(STATUS_CONNECTED)
                     subscribeTopics()
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                     Log.e(TAG, "MQTT connect failed", exception)
+                    sendStatus("Connection failed")
                     stopSelf()
                 }
             })
         } catch (ex: MqttException) {
             Log.e(TAG, "Unable to connect", ex)
+            sendStatus("Connection failed")
             stopSelf()
         }
     }
 
     private fun stopConnection() {
         try {
+            sendStatus(STATUS_DISCONNECTING)
             client?.disconnect()
         } catch (ex: MqttException) {
             Log.w(TAG, "Disconnect failed", ex)
+            sendStatus("Disconnect failed")
         }
         client = null
         stopForeground(STOP_FOREGROUND_REMOVE)
+        sendStatus(STATUS_DISCONNECTED)
         stopSelf()
     }
 
@@ -121,6 +130,7 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
 
     override fun connectionLost(cause: Throwable?) {
         Log.w(TAG, "Connection lost", cause)
+        sendStatus("Connection lost")
     }
 
     override fun messageArrived(topic: String?, message: MqttMessage?) {
@@ -195,9 +205,22 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
             .build()
     }
 
+    private fun sendStatus(message: String) {
+        val intent = Intent(ACTION_STATUS).apply {
+            putExtra(EXTRA_STATUS_MESSAGE, message)
+        }
+        sendBroadcast(intent)
+    }
+
     companion object {
         const val ACTION_CONNECT = "org.archuser.mqttnotify.action.CONNECT"
         const val ACTION_DISCONNECT = "org.archuser.mqttnotify.action.DISCONNECT"
+        const val ACTION_STATUS = "org.archuser.mqttnotify.action.STATUS"
+        const val EXTRA_STATUS_MESSAGE = "org.archuser.mqttnotify.extra.STATUS_MESSAGE"
+        const val STATUS_CONNECTING = "Connecting..."
+        const val STATUS_CONNECTED = "Connected"
+        const val STATUS_DISCONNECTING = "Disconnecting..."
+        const val STATUS_DISCONNECTED = "Disconnected"
         private const val TAG = "MqttForegroundService"
         private const val SERVICE_CHANNEL_ID = "mqtt_service"
         private const val NOTIFICATION_ID = 1001

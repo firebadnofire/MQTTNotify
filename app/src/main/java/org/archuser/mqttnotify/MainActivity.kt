@@ -1,6 +1,7 @@
 package org.archuser.mqttnotify
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -33,6 +34,15 @@ class MainActivity : AppCompatActivity() {
     private val topics = mutableListOf<TopicConfig>()
     private lateinit var adapter: TopicAdapter
     private var currentConfig: AppConfig? = null
+    private val statusReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: android.content.Context?, intent: Intent?) {
+            if (intent?.action != MqttForegroundService.ACTION_STATUS) {
+                return
+            }
+            val message = intent.getStringExtra(MqttForegroundService.EXTRA_STATUS_MESSAGE) ?: return
+            Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private val exportLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) {
@@ -59,6 +69,16 @@ class MainActivity : AppCompatActivity() {
         setupServerForm()
         requestNotificationPermission()
         refreshFromStorage()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerReceiver(statusReceiver, IntentFilter(MqttForegroundService.ACTION_STATUS))
+    }
+
+    override fun onStop() {
+        unregisterReceiver(statusReceiver)
+        super.onStop()
     }
 
     private fun setupDrawer() {
@@ -103,9 +123,11 @@ class MainActivity : AppCompatActivity() {
         }
         binding.connectButton.setOnClickListener {
             saveConfigFromInputs()
+            Toast.makeText(this, MqttForegroundService.STATUS_CONNECTING, Toast.LENGTH_SHORT).show()
             startMqttService(MqttForegroundService.ACTION_CONNECT)
         }
         binding.disconnectButton.setOnClickListener {
+            Toast.makeText(this, MqttForegroundService.STATUS_DISCONNECTING, Toast.LENGTH_SHORT).show()
             startMqttService(MqttForegroundService.ACTION_DISCONNECT)
         }
         binding.pickCertButton.setOnClickListener {
