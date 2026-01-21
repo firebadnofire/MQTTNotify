@@ -129,6 +129,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.startButton.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this, R.string.notifications_permission_required, Toast.LENGTH_LONG).show()
+                notificationPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
+                return@setOnClickListener
+            }
             setServiceStatus(R.string.service_status_starting)
             val updated = prefs.updateConfig { current ->
                 current.copy(

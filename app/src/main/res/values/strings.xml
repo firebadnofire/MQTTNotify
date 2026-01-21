@@ -22,6 +22,7 @@
     <string name="stop_service">Stop service</string>
     <string name="tls_required">TLS is required. Use an ssl:// broker URI.</string>
     <string name="topics_required">At least one topic is required.</string>
+    <string name="notifications_permission_required">Notifications permission is required to run the foreground service.</string>
     <string name="notifications_permission_denied">Notifications are disabled. You can enable them in system settings.</string>
     <string name="service_notification_title">MQTT connection</string>
     <string name="service_notification_connecting">Connecting…</string>
