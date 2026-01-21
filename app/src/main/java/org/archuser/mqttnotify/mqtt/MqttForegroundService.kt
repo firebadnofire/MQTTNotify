@@ -15,6 +15,7 @@ import org.archuser.mqttnotify.R
 import org.archuser.mqttnotify.config.ConfigStorage
 import org.archuser.mqttnotify.notification.NotificationHelper
 import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
@@ -131,7 +132,7 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
         notificationHelper?.postNotification(topicConfig, message.qos, payload)
     }
 
-    override fun deliveryComplete(token: IMqttToken?) {
+    override fun deliveryComplete(token: IMqttDeliveryToken?) {
         // No-op: we only subscribe.
     }
 
