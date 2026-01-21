@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.archuser.mqttnotify.config.AppConfig
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         storage = ConfigStorage(this)
         setSupportActionBar(binding.toolbar)
         setupDrawer()
+        applyWindowInsets()
         setupTopics()
         setupServerForm()
         requestNotificationPermission()
@@ -71,6 +74,19 @@ class MainActivity : AppCompatActivity() {
                 saveConfigFromInputs()
             }
         })
+    }
+
+    private fun applyWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.setPadding(view.paddingLeft, statusBar.top, view.paddingRight, view.paddingBottom)
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerToggle) { view, insets ->
+            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.setPadding(view.paddingLeft, statusBar.top + view.paddingTop, view.paddingRight, view.paddingBottom)
+            insets
+        }
     }
 
     private fun setupTopics() {
