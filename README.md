@@ -131,6 +131,7 @@ This mapping is intentional and opinionated.
 * Subscriptions must be explicitly defined
 * Wildcards are supported but discouraged
 * Each topic can have independent notification rules
+* Topics are stored locally only; no message history is kept
 
 Examples:
 
@@ -139,6 +140,19 @@ alerts/backup
 alerts/ci/failed
 home/doorbell
 ```
+
+---
+
+## Configuration UI
+
+The main screen lists topic “channels.” Use the left drawer (hamburger menu) to configure the
+MQTTS server, credentials, and client certificate alias. The app intentionally does not hide that
+a foreground service is required to stay connected.
+
+### Import/export
+
+Configuration can be imported from or exported to a JSON file. Exports intentionally **exclude**
+stored passwords; secrets remain in Android Keystore-backed storage.
 
 ---
 
