@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDrawer() {
         binding.toolbar.setNavigationIcon(R.drawable.ic_menu)
-        binding.toolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.on_primary))
+        binding.toolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.toolbar_icon))
         binding.toolbar.setNavigationOnClickListener {
             if (binding.drawerLayout.isDrawerOpen(binding.configDrawer)) {
                 binding.drawerLayout.closeDrawer(binding.configDrawer)

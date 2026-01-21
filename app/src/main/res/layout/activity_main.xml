@@ -14,9 +14,9 @@
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary"
+            android:backgroundTint="@color/surface"
             android:title="@string/app_name"
-            android:titleTextColor="@color/on_primary"
+            android:titleTextColor="@color/toolbar_text"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
