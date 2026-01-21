@@ -22,6 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3.MqttTopic
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.net.ssl.KeyManagerFactory
@@ -127,7 +128,9 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
             return
         }
         val config = storage.load()
-        val topicConfig = config.topics.find { it.topic == topic } ?: return
+        val topicConfig = config.topics.find { configured ->
+            MqttTopic.isMatched(configured.topic, topic)
+        } ?: return
         val payload = message.payload?.toString(Charsets.UTF_8) ?: return
         notificationHelper?.postNotification(topicConfig, message.qos, payload)
     }
