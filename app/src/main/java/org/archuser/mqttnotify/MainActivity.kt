@@ -62,7 +62,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupDrawer() {
-        binding.drawerToggle.setOnClickListener {
+        binding.toolbar.setNavigationIcon(R.drawable.ic_menu)
+        binding.toolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.on_primary))
+        binding.toolbar.setNavigationOnClickListener {
             if (binding.drawerLayout.isDrawerOpen(binding.configDrawer)) {
                 binding.drawerLayout.closeDrawer(binding.configDrawer)
             } else {
@@ -80,11 +82,6 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             view.setPadding(view.paddingLeft, statusBar.top, view.paddingRight, view.paddingBottom)
-            insets
-        }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerToggle) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            view.setPadding(view.paddingLeft, statusBar.top + view.paddingTop, view.paddingRight, view.paddingBottom)
             insets
         }
     }
