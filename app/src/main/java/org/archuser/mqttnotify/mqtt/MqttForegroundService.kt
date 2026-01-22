@@ -7,9 +7,12 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.security.KeyChain
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import org.archuser.mqttnotify.R
 import org.archuser.mqttnotify.config.ConfigStorage
@@ -210,6 +213,13 @@ class MqttForegroundService : Service(), MqttCallbackExtended {
             putExtra(EXTRA_STATUS_MESSAGE, message)
         }
         sendBroadcast(intent)
+        showToast(message)
+    }
+
+    private fun showToast(message: String) {
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     companion object {
