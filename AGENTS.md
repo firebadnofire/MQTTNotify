@@ -46,7 +46,6 @@ AI agents MUST:
 * Preserve support for client certificate authentication
 * Avoid introducing insecure defaults
 * Store secrets only via Android Keystore
-* Avoid logging sensitive material
 
 Security simplifications are not acceptable, even for convenience.
 
@@ -65,8 +64,6 @@ Allowed areas of change:
 
 Disallowed expansions:
 
-* Message dashboards
-* Notification history views
 * Multi-device coordination
 * Cloud fallback mechanisms
 * "Reliability" layers that imply server involvement
