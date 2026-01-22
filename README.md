@@ -48,7 +48,7 @@ If you can `mosquitto_pub`, you can notify your phone.
 
 * Android 8.0+
 * Battery optimization **disabled** for this app
-* A reachable MQTT broker with TLS enabled
+* A reachable MQTT broker with TLS enabled (`mqtts://` or `ssl://` only)
 
 OEMs with aggressive task killing (Samsung, Xiaomi, OnePlus) may require additional steps.
 See: [https://dontkillmyapp.com](https://dontkillmyapp.com)
@@ -71,8 +71,8 @@ Anything compliant with MQTT 3.1.1 or 5.0 over TLS should work.
 
 Supported methods:
 
-* Username + password
-* Client TLS certificates (recommended)
+* Username + password (stored via Android Keystore-backed secrets)
+* Client TLS certificates (recommended, loaded from Android Keystore)
 
 Anonymous or plaintext connections are intentionally unsupported.
 
@@ -131,6 +131,8 @@ This mapping is intentional and opinionated.
 * Subscriptions must be explicitly defined
 * Wildcards are supported but discouraged
 * Each topic can have independent notification rules
+* Topic filters are validated strictly (no empty levels, predictable wildcard placement)
+* Optional QoS can be specified per topic using `topic:0`, `topic:1`, or `topic:2` (topic filters must not include `:`)
 
 Examples:
 
@@ -138,6 +140,7 @@ Examples:
 alerts/backup
 alerts/ci/failed
 home/doorbell
+alerts/ci/failed:2
 ```
 
 ---
@@ -156,7 +159,8 @@ If the app is killed, messages published during that time are **not** replayed.
 ## Security model
 
 * The MQTT broker is the trust root
-* TLS is mandatory
+* TLS is mandatory (non-TLS broker URIs are rejected)
+* Client certificates and keys are loaded from Android Keystore
 * Credentials are stored using Android Keystore
 * No analytics, no external connections
 
