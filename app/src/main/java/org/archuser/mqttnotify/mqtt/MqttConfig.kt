@@ -16,6 +16,7 @@ sealed class MqttStatus {
     data object Connecting : MqttStatus()
     data object Connected : MqttStatus()
     data class FailedRetrying(val cause: Throwable?) : MqttStatus()
+    data class Retrying(val attempt: Int, val delayMs: Long, val cause: Throwable?) : MqttStatus()
     data object Disconnected : MqttStatus()
 }
 

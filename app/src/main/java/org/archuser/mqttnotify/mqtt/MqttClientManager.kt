@@ -50,7 +50,7 @@ class MqttClientManager(
         })
 
         val options = MqttConnectOptions().apply {
-            isAutomaticReconnect = true
+            isAutomaticReconnect = false
             isCleanSession = false
             socketFactory = tlsProvider.createSocketFactory(config.clientKeyAlias)
         }

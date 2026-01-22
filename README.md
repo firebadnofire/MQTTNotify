@@ -151,6 +151,7 @@ alerts/ci/failed:2
 * Reconnects automatically with exponential backoff
 * Adapts keepalive based on network type
 * No polling, no wakeups when idle
+* Surfaces connection status in the in-app UI
 
 If the app is killed, messages published during that time are **not** replayed.
 
