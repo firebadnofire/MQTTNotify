@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val topics = mutableListOf<TopicConfig>()
     private lateinit var adapter: TopicAdapter
     private var currentConfig: AppConfig? = null
+    private var statusReceiverRegistered = false
     private val statusReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: android.content.Context?, intent: Intent?) {
             if (intent?.action != MqttForegroundService.ACTION_STATUS) {
@@ -73,11 +74,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        registerReceiver(statusReceiver, IntentFilter(MqttForegroundService.ACTION_STATUS))
+        if (!statusReceiverRegistered) {
+            ContextCompat.registerReceiver(
+                this,
+                statusReceiver,
+                IntentFilter(MqttForegroundService.ACTION_STATUS),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+            statusReceiverRegistered = true
+        }
     }
 
     override fun onStop() {
-        unregisterReceiver(statusReceiver)
+        if (statusReceiverRegistered) {
+            unregisterReceiver(statusReceiver)
+            statusReceiverRegistered = false
+        }
         super.onStop()
     }
 
