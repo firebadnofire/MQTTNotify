@@ -16,4 +16,22 @@
     <string name="foreground_service_channel_description">Keeps the MQTT connection active for notifications.</string>
     <string name="foreground_service_notification_title">MQTT Notify</string>
     <string name="foreground_service_notification_text">Listening for MQTTS notifications.</string>
+    <string name="mqtt_status_connecting">Connecting to broker…</string>
+    <string name="mqtt_status_connected">Connected and listening.</string>
+    <string name="mqtt_status_retrying">Reconnect attempt %1$d in %2$d seconds.</string>
+    <string name="mqtt_status_retrying_generic">Reconnecting…</string>
+    <string name="mqtt_status_disconnected">Disconnected.</string>
+
+    <string name="notification_channel_low_id">mqtt_notify_low</string>
+    <string name="notification_channel_low_name">MQTT notifications (low)</string>
+    <string name="notification_channel_low_description">Best-effort notifications for QoS 0.</string>
+    <string name="notification_channel_normal_id">mqtt_notify_normal</string>
+    <string name="notification_channel_normal_name">MQTT notifications (normal)</string>
+    <string name="notification_channel_normal_description">Standard notifications for QoS 1.</string>
+    <string name="notification_channel_high_id">mqtt_notify_high</string>
+    <string name="notification_channel_high_name">MQTT notifications (high)</string>
+    <string name="notification_channel_high_description">High priority notifications for explicit payload priority.</string>
+    <string name="notification_channel_urgent_id">mqtt_notify_urgent</string>
+    <string name="notification_channel_urgent_name">MQTT notifications (urgent)</string>
+    <string name="notification_channel_urgent_description">Urgent notifications for QoS 2 or urgent payload priority.</string>
 </resources>

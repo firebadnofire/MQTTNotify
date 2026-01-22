@@ -1,13 +1,11 @@
 package org.archuser.mqttnotify.ui.home
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.archuser.mqttnotify.mqtt.MqttStatus
+import org.archuser.mqttnotify.mqtt.MqttStatusRepository
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+    val status: LiveData<MqttStatus> = MqttStatusRepository.status
 }
