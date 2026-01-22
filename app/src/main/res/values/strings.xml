@@ -10,4 +10,10 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <string name="foreground_service_channel_id">mqtt_notify_foreground</string>
+    <string name="foreground_service_channel_name">MQTT connection</string>
+    <string name="foreground_service_channel_description">Keeps the MQTT connection active for notifications.</string>
+    <string name="foreground_service_notification_title">MQTT Notify</string>
+    <string name="foreground_service_notification_text">Listening for MQTTS notifications.</string>
 </resources>
