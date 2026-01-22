@@ -1,6 +1,7 @@
 package org.archuser.mqttnotify.mqtt
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.IMqttToken
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
@@ -45,7 +46,7 @@ class MqttClientManager(
                 messageListener.onMessage(topic, message.payload, message.qos, message.isRetained)
             }
 
-            override fun deliveryComplete(token: IMqttToken?) = Unit
+            override fun deliveryComplete(token: IMqttDeliveryToken?) = Unit
         })
 
         val options = MqttConnectOptions().apply {
