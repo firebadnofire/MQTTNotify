@@ -13,6 +13,7 @@ This is **not** a general-purpose MQTT client. It is a notification sink for peo
 * Maintains a persistent **MQTTS** connection
 * Subscribes to explicitly configured topics
 * Posts Android notifications when messages arrive
+* Records incoming messages to local disk per topic
 * Fully self-hosted end to end
 
 If you can `mosquitto_pub`, you can notify your phone.
@@ -131,6 +132,7 @@ This mapping is intentional and opinionated.
 * Subscriptions must be explicitly defined
 * Wildcards are supported but discouraged
 * Each topic can have independent notification rules
+* Each topic is recorded to local disk in per-topic log files
 
 Examples:
 
@@ -146,8 +148,9 @@ home/doorbell
 
 * Uses a persistent foreground service
 * Reconnects automatically with exponential backoff
-* Adapts keepalive based on network type
+* Uses a steady keepalive interval to avoid chatty polling
 * No polling, no wakeups when idle
+* A live connection status is shown in the settings drawer
 
 If the app is killed, messages published during that time are **not** replayed.
 
@@ -209,3 +212,13 @@ MIT
 Infrastructure is real, physical, and owned by someone.
 
 This app assumes that someone is you.
+
+---
+
+## Configuration files
+
+The settings drawer includes **Import** and **Export** buttons for configuration files.
+
+* Export includes broker host/port, client ID, client certificate alias, and topic list.
+* Export **does not** include usernames or passwords. Re-enter them after importing.
+* Configuration files are JSON and intended for manual inspection.

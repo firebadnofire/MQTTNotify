@@ -1,13 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MQTT Notify</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="app_name">MQTTNotify</string>
+    <string name="nav_open">Open navigation drawer</string>
+    <string name="nav_close">Close navigation drawer</string>
+    <string name="settings_title">Server settings</string>
+    <string name="server_host">Server host</string>
+    <string name="server_port">Server port</string>
+    <string name="client_id">Client ID</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="client_cert_alias">Client certificate alias</string>
+    <string name="select_client_cert">Select client certificate</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="status_label">Connection status</string>
+    <string name="import_config">Import config</string>
+    <string name="export_config">Export config</string>
+    <string name="topics_title">Notification channels</string>
+    <string name="add_topic">Add topic</string>
+    <string name="topic_hint">MQTT topic</string>
+    <string name="remove">Remove</string>
+    <string name="status_connected">connected</string>
+    <string name="status_connecting">connecting</string>
+    <string name="status_disconnected">disconnected</string>
+    <string name="status_retrying">connection failed, retrying in %1$ds...</string>
+    <string name="config_export_note">Export excludes passwords and private keys.</string>
 </resources>
